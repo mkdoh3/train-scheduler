@@ -20,13 +20,11 @@ var database = firebase.database();
 $("#submit-button").on("click", function (event) {
     event.preventDefault();
 
-    // Grabbed values from text-boxes
     name = $("#train-name").val().trim();
     destination = $("#destination").val().trim();
     start = $("#start-time").val();
     frequency = $("#frequency").val().trim();
 
-    // Code for "Setting values in the database"
     database.ref().push({
         name: name,
         destination: destination,
@@ -35,8 +33,6 @@ $("#submit-button").on("click", function (event) {
     });
 
 
-
-    //clear form
     $("#train-form").trigger("reset")
 })
 
@@ -48,12 +44,11 @@ function renderTableData(sv) {
     var currentTime = moment();
     var timeDifference = currentTime.diff(startTime, "minutes");
     var lastTrain = timeDifference % sv.frequency;
+    console.log("before add", currentTime)
     var nextTrain = currentTime.add(sv.frequency - lastTrain, "minutes")
+    console.log("after add", currentTime)
     var nextTrainDisplay = nextTrain.format("h:mm: A")
-
-    //    var minutesAway = nextTrain.diff(currentTime, "minutes")
-    //no idea why minutesAway variable doesn't work in the above.. even though it works in the timeDifference declaration
-
+    //the .add method from ln 48 redefines currentTime, so it can't be passed in again on ln 52
     var minutesAway = nextTrain.diff(moment(), "minutes")
 
 
@@ -71,21 +66,3 @@ database.ref().on("child_added", function (snapshot) {
     renderTableData(sv);
 
 });
-
-//
-//$(document).on("ready", function () {
-//
-//    var frequency = 15;
-//    var startTime = moment().hour(21).minute(30).seconds(00);
-//    var currentTime = moment();
-//    var difference = currentTime.diff(startTime, "minutes");
-//    var minutesSinceLastTrain = difference % frequency;
-//    var minutesTillNextTrain = frequency - minutesSinceLastTrain;
-//
-//
-//    console.log("start time", startTime)
-//    console.log("current time", currentTime)
-//    console.log("time difference", difference)
-//    console.log("last train", minutesSinceLastTrain)
-//    console.log("nex train", minutesTillNextTrain)
-//})
